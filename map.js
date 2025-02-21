@@ -20,7 +20,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGptYW5zNjMwIiwiYSI6ImNtN2U1eWQ5eDBiOGsybnB2N
         data: 'https://raw.githubusercontent.com/cambridgegis/cambridgegis_data/main/Recreation/Bike_Facilities/RECREATION_BikeFacilities.geojson'
     });
     map.addLayer({
-        id: 'bike-lanes',
+        id: 'bike-lanes-boston',
         type: 'line',
         source: 'boston_route',
         paint: {
@@ -30,7 +30,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGptYW5zNjMwIiwiYSI6ImNtN2U1eWQ5eDBiOGsybnB2N
           }
     });
     map.addLayer({
-        id: 'bike-lanes',
+        id: 'bike-lanes-cambridge',
         type: 'line',
         source: 'cambridge_route',
         paint: {
