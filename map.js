@@ -34,7 +34,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGptYW5zNjMwIiwiYSI6ImNtN2U1eWQ5eDBiOGsybnB2N
         type: 'line',
         source: 'cambridge_route',
         paint: {
-            'line-color': '#32D400',  // A bright green using hex code
+            'line-color': 'blue',  // A bright green using hex code
             'line-width': 5,          // Thicker lines
             'line-opacity': 0.6       // Slightly less transparent
           }
