@@ -1,4 +1,5 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiZGptYW5zNjMwIiwiYSI6ImNtN2U1eWQ5eDBiOGsybnB2Nmt6MGtnejcifQ.vIQNH-qrlIFtigm5gDEalg';
+import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
 
    // Initialize the map
    const map = new mapboxgl.Map({
@@ -10,7 +11,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGptYW5zNjMwIiwiYSI6ImNtN2U1eWQ5eDBiOGsybnB2N
      maxZoom: 18 // Maximum allowed zoom
    });
 
-   map.on('load', () => { 
+   map.on('load', async () => { 
     map.addSource('boston_route', {
         type: 'geojson',
         data: 'https://bostonopendata-boston.opendata.arcgis.com/datasets/boston::existing-bike-network-2022.geojson?...'
@@ -39,5 +40,18 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGptYW5zNjMwIiwiYSI6ImNtN2U1eWQ5eDBiOGsybnB2N
             'line-opacity': 0.6       // Slightly less transparent
           }
     });
+    let jsonData;
+    try {
+        const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
+        
+        // Await JSON fetch
+        const jsonData = await d3.json(jsonurl);
+        
+        console.log('Loaded JSON Data:', jsonData); // Log to verify structure
+    } catch (error) {
+        console.error('Error loading JSON:', error); // Handle errors
+    }
+    let stations = jsonData.data.stations;
+    console.log('Stations Array:', stations);
     
   });
