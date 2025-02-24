@@ -13,11 +13,13 @@ const map = new mapboxgl.Map({
 
 map.on('load', async () => {
   const svg = d3.select('#map').select('svg');
+
   function getCoords(station) {
     const point = new mapboxgl.LngLat(+station.lon, +station.lat);  // Convert lon/lat to Mapbox LngLat
     const { x, y } = map.project(point);  // Project to pixel coordinates
     return { cx: x, cy: y };  // Return as object for use in SVG attributes
   }
+
   try {
     // Add Boston route source
     map.addSource('boston_route', {
@@ -96,11 +98,12 @@ map.on('load', async () => {
       .data(stations)
       .enter()
       .append('circle')
-      .attr('r', d => radiusScale(d.totalTraffic))               // Radius of the circle
+      .attr('class', 'circle')  // Apply the .circle class to each circle
+      .attr('r', d => radiusScale(d.totalTraffic)) // Radius of the circle
       .attr('fill', 'steelblue')  // Circle fill color
       .attr('stroke', 'white')    // Circle border color
       .attr('stroke-width', 1)    // Circle border thickness
-      .attr('opacity', 0.8)      // Circle opacity
+      .attr('opacity', 0.8)       // Circle opacity
       .each(function(d) {
         // Add <title> for browser tooltips
         d3.select(this)
@@ -117,12 +120,12 @@ map.on('load', async () => {
 
     // Initial position update when map loads
     updatePositions();
-      map.on('move', updatePositions);     // Update during map movement
-      map.on('zoom', updatePositions);     // Update during zooming
-      map.on('resize', updatePositions);   // Update on window resize
-      map.on('moveend', updatePositions);  // Final adjustment after movement ends
+    map.on('move', updatePositions);     // Update during map movement
+    map.on('zoom', updatePositions);     // Update during zooming
+    map.on('resize', updatePositions);   // Update on window resize
+    map.on('moveend', updatePositions);  // Final adjustment after movement ends
 
-      } catch (error) {
-        console.error('Error loading data:', error); // Handle errors
-      }
+  } catch (error) {
+    console.error('Error loading data:', error); // Handle errors
+  }
 });
