@@ -10,15 +10,16 @@
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
 </head>
 <body>
-    <h1>Bikewatching</h1>
     <header>
+        <h1>Bikewatching</h1>
         <label for="timeFilter">Filter by time (minutes):
             <input type="range" id="timeFilter" name="timeFilter" min="-1" max="1440" value="-1">
-            <time id="selectedTime">Any time</time>
-            <em id="anyTime" style="display: none;">(any time)</em>
+            <div>
+                <time id="selectedTime">Any time</time>
+                <em id="anyTime" style="display: none;">(any time)</em>
+            </div>
         </label>
     </header>
-    <p>Tracking Bike Routes!</p>
     <div id="map">
         <svg></svg>
     </div>

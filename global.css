@@ -13,6 +13,9 @@ body {
     display: flex;
     gap: 1em;
     align-items: baseline;
+  }
+
+  label{
     margin-left: auto;
   }
 
