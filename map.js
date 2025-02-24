@@ -63,32 +63,35 @@ map.on('load', async () => {
     let stations = jsonData.data.stations;
     console.log('Stations Array:', stations);
 
+    const trips = await d3.csv('https://dsc106.com/labs/lab07/data/bluebikes-traffic-2024-03.csv');
+    console.log('Loaded CSV Data:', trips); // Log to verify structure
+
     // Append circles to the SVG for each station
-const circles = svg.selectAll('circle')
-.data(stations)
-.enter()
-.append('circle')
-.attr('r', 5)               // Radius of the circle
-.attr('fill', 'steelblue')  // Circle fill color
-.attr('stroke', 'white')    // Circle border color
-.attr('stroke-width', 1)    // Circle border thickness
-.attr('opacity', 0.8);      // Circle opacity
+    const circles = svg.selectAll('circle')
+      .data(stations)
+      .enter()
+      .append('circle')
+      .attr('r', 5)               // Radius of the circle
+      .attr('fill', 'steelblue')  // Circle fill color
+      .attr('stroke', 'white')    // Circle border color
+      .attr('stroke-width', 1)    // Circle border thickness
+      .attr('opacity', 0.8);      // Circle opacity
 
-// Function to update circle positions when the map moves/zooms
-function updatePositions() {
-  circles
-    .attr('cx', d => getCoords(d).cx)  // Set the x-position using projected coordinates
-    .attr('cy', d => getCoords(d).cy); // Set the y-position using projected coordinates
-}
+    // Function to update circle positions when the map moves/zooms
+    function updatePositions() {
+      circles
+        .attr('cx', d => getCoords(d).cx)  // Set the x-position using projected coordinates
+        .attr('cy', d => getCoords(d).cy); // Set the y-position using projected coordinates
+    }
 
-// Initial position update when map loads
-updatePositions();
-map.on('move', updatePositions);     // Update during map movement
-map.on('zoom', updatePositions);     // Update during zooming
-map.on('resize', updatePositions);   // Update on window resize
-map.on('moveend', updatePositions);  // Final adjustment after movement ends
+    // Initial position update when map loads
+    updatePositions();
+      map.on('move', updatePositions);     // Update during map movement
+      map.on('zoom', updatePositions);     // Update during zooming
+      map.on('resize', updatePositions);   // Update on window resize
+      map.on('moveend', updatePositions);  // Final adjustment after movement ends
 
-  } catch (error) {
-    console.error('Error loading data:', error); // Handle errors
-  }
+      } catch (error) {
+        console.error('Error loading data:', error); // Handle errors
+      }
 });
