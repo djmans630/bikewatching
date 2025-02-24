@@ -25,3 +25,8 @@ body {
     color: #666;
     font-style: italic;
   }
+
+  h1{
+    align-self: flex-start;
+    margin: 0;
+  }
