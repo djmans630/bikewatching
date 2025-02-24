@@ -12,6 +12,12 @@ const map = new mapboxgl.Map({
 });
 
 map.on('load', async () => {
+  const svg = d3.select('#map').select('svg');
+  function getCoords(station) {
+    const point = new mapboxgl.LngLat(+station.lon, +station.lat);  // Convert lon/lat to Mapbox LngLat
+    const { x, y } = map.project(point);  // Project to pixel coordinates
+    return { cx: x, cy: y };  // Return as object for use in SVG attributes
+  }
   try {
     // Add Boston route source
     map.addSource('boston_route', {
@@ -49,13 +55,6 @@ map.on('load', async () => {
       }
     });
 
-  const svg = d3.select('#map').select('svg');
-  function getCoords(station) {
-    const point = new mapboxgl.LngLat(+station.lon, +station.lat);  // Convert lon/lat to Mapbox LngLat
-    const { x, y } = map.project(point);  // Project to pixel coordinates
-    return { cx: x, cy: y };  // Return as object for use in SVG attributes
-  }
-
     // Fetch and log JSON data
     const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
     const jsonData = await d3.json(jsonurl);
@@ -64,11 +63,7 @@ map.on('load', async () => {
     let stations = jsonData.data.stations;
     console.log('Stations Array:', stations);
 
-  } catch (error) {
-    console.error('Error loading data:', error); // Handle errors
-  }
-
-  // Append circles to the SVG for each station
+    // Append circles to the SVG for each station
 const circles = svg.selectAll('circle')
 .data(stations)
 .enter()
@@ -92,4 +87,8 @@ map.on('move', updatePositions);     // Update during map movement
 map.on('zoom', updatePositions);     // Update during zooming
 map.on('resize', updatePositions);   // Update on window resize
 map.on('moveend', updatePositions);  // Final adjustment after movement ends
+
+  } catch (error) {
+    console.error('Error loading data:', error); // Handle errors
+  }
 });
