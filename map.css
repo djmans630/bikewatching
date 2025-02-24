@@ -24,3 +24,9 @@ html, body {
     /*opacity: 50%;*/
     pointer-events: none;
   }
+
+  #map svg .circle {
+    fill-opacity: 60%;
+    fill: steelblue;
+    stroke: white;
+  }
