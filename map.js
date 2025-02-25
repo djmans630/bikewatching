@@ -107,14 +107,6 @@ map.on('load', async () => {
       }
     });
 
-    // Fetch and log JSON data
-    const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
-    const jsonData = await d3.json(jsonurl);
-    console.log('Loaded JSON Data:', jsonData); // Log to verify structure
-
-    const stations = computeStationTraffic(jsonData.data.stations, trips);
-    console.log('Stations Array:', stations);
-
     let trips = await d3.csv(
       'https://dsc106.com/labs/lab07/data/bluebikes-traffic-2024-03.csv',
       (trip) => {
@@ -124,6 +116,14 @@ map.on('load', async () => {
       },
     );
     console.log('Loaded CSV Data:', trips); // Log to verify structure
+
+    // Fetch and log JSON data
+    const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
+    const jsonData = await d3.json(jsonurl);
+    console.log('Loaded JSON Data:', jsonData); // Log to verify structure
+
+    const stations = computeStationTraffic(jsonData.data.stations, trips);
+    console.log('Stations Array:', stations);
 
     const radiusScale = d3
       .scaleSqrt()
