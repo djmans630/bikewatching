@@ -24,8 +24,15 @@ html, body {
 }
 
 #map svg .circle {
-  fill-opacity: 60%;
-  fill: steelblue;
+  --color-departures: steelblue;
+  --color-arrivals: darkorange;
+  --color: color-mix(
+    in oklch,
+    var(--color-departures) calc(100% * var(--departure-ratio)),
+    var(--color-arrivals)
+  );
+  fill-opacity: 80%;
+  fill: var(--color);
   stroke: white;
   pointer-events: auto;
 }

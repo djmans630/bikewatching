@@ -69,6 +69,7 @@ map.on('load', async () => {
   let stations;
   let circles;
   let radiusScale;
+  let stationFlow = d3.scaleQuantize().domain([0, 1]).range([0, 0.5, 1]);
 
   try {
     // Load trips data first and convert date strings to Date objects
@@ -146,7 +147,9 @@ map.on('load', async () => {
         d3.select(this)
           .append('title')
           .text(`${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
-      });
+      })
+      .style("--departure-ratio", d => stationFlow(d.departures / d.totalTraffic));
+      
 
     // Function to update circle positions when the map moves/zooms
     function updatePositions() {
@@ -208,6 +211,9 @@ map.on('load', async () => {
     circles
       .data(filteredStations, (d) => d.short_name)
       .join('circle')
-      .attr('r', (d) => radiusScale(d.totalTraffic));
+      .attr('r', (d) => radiusScale(d.totalTraffic))
+      .style('--departure-ratio', (d) =>
+        stationFlow(d.departures / d.totalTraffic),
+      );
   }
 });
