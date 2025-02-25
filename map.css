@@ -38,6 +38,13 @@ html, body {
   pointer-events: auto;
 }
 
+.legend{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 0 2rem;
+}
+
 .legend > div {
   --color-departures: steelblue;
   --color-arrivals: darkorange;
@@ -48,7 +55,6 @@ html, body {
   );
 
   margin-block: 1rem;
-  align-items: center;
   justify-content: space-between;
   display: flex;
   flex: 1;
