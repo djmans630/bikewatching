@@ -91,9 +91,40 @@ map.on('load', async () => {
     stations = computeStationTraffic(jsonData.data.stations, trips);
     console.log('Stations Array:', stations);
 
-    // (Additional code for adding sources/layers, etc.)
-    // For example, adding the bike lane layers, etc.
-    // ...
+    map.addSource('boston_route', {
+      type: 'geojson',
+      data: 'https://bostonopendata-boston.opendata.arcgis.com/datasets/boston::existing-bike-network-2022.geojson?...'
+    });
+    
+    // Add Cambridge route source
+    map.addSource('cambridge_route', {
+      type: 'geojson',
+      data: 'https://raw.githubusercontent.com/cambridgegis/cambridgegis_data/main/Recreation/Bike_Facilities/RECREATION_BikeFacilities.geojson'
+    });
+    
+    // Add Boston bike lanes layer
+    map.addLayer({
+      id: 'bike-lanes-boston',
+      type: 'line',
+      source: 'boston_route',
+      paint: {
+        'line-color': '#32D400',
+        'line-width': 5,
+        'line-opacity': 0.6
+      }
+    });
+    
+    // Add Cambridge bike lanes layer
+    map.addLayer({
+      id: 'bike-lanes-cambridge',
+      type: 'line',
+      source: 'cambridge_route',
+      paint: {
+        'line-color': 'blue',
+        'line-width': 5,
+        'line-opacity': 0.6
+      }
+    });
 
     // Create a scale for circle radii based on total traffic
     radiusScale = d3.scaleSqrt()
