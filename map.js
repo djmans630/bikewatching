@@ -148,9 +148,9 @@ map.on('load', async () => {
     console.error('Error loading data:', error); // Handle errors
   }
 
-  const timeSlider = document.getElementById('#time-slider');
-  const selectedTime = document.getElementById('#selected-time');
-  const anyTimeLabel = document.getElementById('#any-time');
+  const timeSlider = document.getElementById('timeFilter');
+  const selectedTime = document.getElementById('selectedTime');
+  const anyTimeLabel = document.getElementById('anyTime');
   timeSlider.addEventListener('input', updateTimeDisplay);
   updateTimeDisplay();
 
