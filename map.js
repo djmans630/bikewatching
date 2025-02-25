@@ -132,7 +132,7 @@ map.on('load', async () => {
 
     // Append circles to the SVG for each station
     const circles = svg.selectAll('circle')
-      .data(stations)
+      .data(stations, (d) => d.short_name)
       .enter()
       .append('circle')
       .attr('class', 'circle')  // Apply the .circle class to each circle
@@ -194,10 +194,12 @@ map.on('load', async () => {
     
     // Recompute station traffic based on the filtered trips
     const filteredStations = computeStationTraffic(stations, filteredTrips);
+
+    timeFilter === -1 ? radiusScale.range([0, 25]) : radiusScale.range([3, 50]);
     
     // Update the scatterplot by adjusting the radius of circles
     circles
-      .data(filteredStations)
+      .data(filteredStations, (d) => d.short_name)
       .join('circle') // Ensure the data is bound correctly
       .attr('r', (d) => radiusScale(d.totalTraffic)); // Update circle sizes
 }
