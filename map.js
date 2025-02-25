@@ -64,85 +64,54 @@ function filterTripsbyTime(trips, timeFilter) {
 map.on('load', async () => {
   const svg = d3.select('#map').select('svg');
 
-  function getCoords(station) {
-    const point = new mapboxgl.LngLat(+station.lon, +station.lat);  // Convert lon/lat to Mapbox LngLat
-    const { x, y } = map.project(point);  // Project to pixel coordinates
-    return { cx: x, cy: y };  // Return as object for use in SVG attributes
-  }
+  // Declare variables in the outer scope of map.on('load') so they are accessible later.
+  let trips;
+  let stations;
+  let circles;
+  let radiusScale;
 
   try {
-    // Add Boston route source
-    map.addSource('boston_route', {
-      type: 'geojson',
-      data: 'https://bostonopendata-boston.opendata.arcgis.com/datasets/boston::existing-bike-network-2022.geojson?...'
-    });
-
-    // Add Cambridge route source
-    map.addSource('cambridge_route', {
-      type: 'geojson',
-      data: 'https://raw.githubusercontent.com/cambridgegis/cambridgegis_data/main/Recreation/Bike_Facilities/RECREATION_BikeFacilities.geojson'
-    });
-
-    // Add Boston bike lanes layer
-    map.addLayer({
-      id: 'bike-lanes-boston',
-      type: 'line',
-      source: 'boston_route',
-      paint: {
-        'line-color': '#32D400',  // A bright green using hex code
-        'line-width': 5,          // Thicker lines
-        'line-opacity': 0.6       // Slightly less transparent
-      }
-    });
-
-    // Add Cambridge bike lanes layer
-    map.addLayer({
-      id: 'bike-lanes-cambridge',
-      type: 'line',
-      source: 'cambridge_route',
-      paint: {
-        'line-color': 'blue',  // A bright green using hex code
-        'line-width': 5,          // Thicker lines
-        'line-opacity': 0.6       // Slightly less transparent
-      }
-    });
-
-    let trips = await d3.csv(
+    // Load trips data first and convert date strings to Date objects
+    trips = await d3.csv(
       'https://dsc106.com/labs/lab07/data/bluebikes-traffic-2024-03.csv',
       (trip) => {
         trip.started_at = new Date(trip.started_at);
         trip.ended_at = new Date(trip.ended_at);
         return trip;
-      },
+      }
     );
-    console.log('Loaded CSV Data:', trips); // Log to verify structure
+    console.log('Loaded CSV Data:', trips);
 
-    // Fetch and log JSON data
+    // Now load station data
     const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
     const jsonData = await d3.json(jsonurl);
-    console.log('Loaded JSON Data:', jsonData); // Log to verify structure
+    console.log('Loaded JSON Data:', jsonData);
 
-    const stations = computeStationTraffic(jsonData.data.stations, trips);
+    // Compute station traffic using the loaded trips
+    stations = computeStationTraffic(jsonData.data.stations, trips);
     console.log('Stations Array:', stations);
 
-    const radiusScale = d3
-      .scaleSqrt()
+    // (Additional code for adding sources/layers, etc.)
+    // For example, adding the bike lane layers, etc.
+    // ...
+
+    // Create a scale for circle radii based on total traffic
+    radiusScale = d3.scaleSqrt()
       .domain([0, d3.max(stations, (d) => d.totalTraffic)])
       .range([0, 25]);
 
-    // Append circles to the SVG for each station
-    const circles = svg.selectAll('circle')
+    // Create circles for the stations (using the computed stations)
+    circles = svg.selectAll('circle')
       .data(stations, (d) => d.short_name)
       .enter()
       .append('circle')
-      .attr('class', 'circle')  // Apply the .circle class to each circle
-      .attr('r', d => radiusScale(d.totalTraffic)) // Radius of the circle
-      .attr('fill', 'steelblue')  // Circle fill color
-      .attr('stroke', 'white')    // Circle border color
-      .attr('stroke-width', 1)    // Circle border thickness
-      .attr('opacity', 0.8)       // Circle opacity
+      .attr('class', 'circle')
+      .attr('r', d => radiusScale(d.totalTraffic))
+      .attr('fill', 'steelblue')
+      .attr('stroke', 'white')
+      .attr('stroke-width', 1)
+      .attr('opacity', 0.8)
       .each(function(d) {
-        // Add <title> for browser tooltips
         d3.select(this)
           .append('title')
           .text(`${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
@@ -151,19 +120,25 @@ map.on('load', async () => {
     // Function to update circle positions when the map moves/zooms
     function updatePositions() {
       circles
-        .attr('cx', d => getCoords(d).cx)  // Set the x-position using projected coordinates
-        .attr('cy', d => getCoords(d).cy); // Set the y-position using projected coordinates
+        .attr('cx', d => {
+          const point = new mapboxgl.LngLat(+d.lon, +d.lat);
+          return map.project(point).x;
+        })
+        .attr('cy', d => {
+          const point = new mapboxgl.LngLat(+d.lon, +d.lat);
+          return map.project(point).y;
+        });
     }
 
-    // Initial position update when map loads
+    // Update positions on map events
     updatePositions();
-    map.on('move', updatePositions);     // Update during map movement
-    map.on('zoom', updatePositions);     // Update during zooming
-    map.on('resize', updatePositions);   // Update on window resize
-    map.on('moveend', updatePositions);  // Final adjustment after movement ends
+    map.on('move', updatePositions);
+    map.on('zoom', updatePositions);
+    map.on('resize', updatePositions);
+    map.on('moveend', updatePositions);
 
   } catch (error) {
-    console.error('Error loading data:', error); // Handle errors
+    console.error('Error loading data:', error);
   }
 
   const timeSlider = document.getElementById('timeFilter');
@@ -183,7 +158,7 @@ map.on('load', async () => {
     
     // Call updateScatterPlot to reflect the changes on the map
     updateScatterPlot(timeFilter);
-}
+  }
 
   timeSlider.addEventListener('input', updateTimeDisplay);
   updateTimeDisplay();
@@ -195,13 +170,13 @@ map.on('load', async () => {
     // Recompute station traffic based on the filtered trips
     const filteredStations = computeStationTraffic(stations, filteredTrips);
 
-    timeFilter === -1 ? radiusScale.range([0, 25]) : radiusScale.range([3, 50]);
-    
+    // Change the radiusScale range based on filtering
+    radiusScale.range(timeFilter === -1 ? [0, 25] : [3, 50]);
+
     // Update the scatterplot by adjusting the radius of circles
     circles
       .data(filteredStations, (d) => d.short_name)
-      .join('circle') // Ensure the data is bound correctly
-      .attr('r', (d) => radiusScale(d.totalTraffic)); // Update circle sizes
-}
-
+      .join('circle')
+      .attr('r', (d) => radiusScale(d.totalTraffic));
+  }
 });
