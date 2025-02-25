@@ -17,28 +17,28 @@ function formatTime(minutes) {
 }
 
 function computeStationTraffic(stations, trips) {
-  // Compute departures
+  // Compute departures: count trips by the starting station
   const departures = d3.rollup(
-      trips, 
-      (v) => v.length, 
-      (d) => d.start_station_id
+    trips,
+    (v) => v.length,
+    (d) => d.start_station_id
   );
 
-  // Computed arrivals as you did in step 4.2
+  // Compute arrivals: count trips by the ending station
   const arrivals = d3.rollup(
     trips,
     (v) => v.length,
-    (d) => d.start_station_id,
+    (d) => d.end_station_id
   );
 
-  // Update each station..
+  // Update each station with arrivals, departures, and total traffic
   return stations.map((station) => {
     let id = station.short_name;
-    station.arrivals = arrivals.get(id) ?? 0;
     station.departures = departures.get(id) ?? 0;
-    station.totalTraffic = station.arrivals + station.departures;
+    station.arrivals = arrivals.get(id) ?? 0;
+    station.totalTraffic = station.departures + station.arrivals;
     return station;
-});
+  });
 }
 
 function minutesSinceMidnight(date) {
