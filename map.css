@@ -36,3 +36,22 @@ html, body {
   stroke: white;
   pointer-events: auto;
 }
+
+.legend > div {
+  --color-departures: steelblue;
+  --color-arrivals: darkorange;
+  --color: color-mix(
+    in oklch,
+    var(--color-departures) calc(100% * var(--departure-ratio)),
+    var(--color-arrivals)
+  );
+
+  margin-block: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  display: flex;
+  flex: 1;
+  color: white;
+  padding: 0 2rem;
+
+}
