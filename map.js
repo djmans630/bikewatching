@@ -16,20 +16,6 @@ function formatTime(minutes) {
   return date.toLocaleString('en-US', { timeStyle: 'short' }); // Format as HH:MM AM/PM
 }
 
-function updateTimeDisplay() {
-  timeFilter = Number(timeSlider.value);  // Get slider value
-
-  if (timeFilter === -1) {
-    selectedTime.textContent = '';  // Clear time display
-    anyTimeLabel.style.display = 'block';  // Show "(any time)"
-  } else {
-    selectedTime.textContent = formatTime(timeFilter);  // Display formatted time
-    anyTimeLabel.style.display = 'none';  // Hide "(any time)"
-  }
-
-  // Trigger filtering logic which will be implemented in the next step
-}
-
 map.on('load', async () => {
   const svg = d3.select('#map').select('svg');
 
@@ -151,6 +137,21 @@ map.on('load', async () => {
   const timeSlider = document.getElementById('timeFilter');
   const selectedTime = document.getElementById('selectedTime');
   const anyTimeLabel = document.getElementById('anyTime');
+
+  function updateTimeDisplay() {
+    timeFilter = Number(timeSlider.value);  // Get slider value
+  
+    if (timeFilter === -1) {
+      selectedTime.textContent = '';  // Clear time display
+      anyTimeLabel.style.display = 'block';  // Show "(any time)"
+    } else {
+      selectedTime.textContent = formatTime(timeFilter);  // Display formatted time
+      anyTimeLabel.style.display = 'none';  // Hide "(any time)"
+    }
+  
+    // Trigger filtering logic which will be implemented in the next step
+  }
+
   timeSlider.addEventListener('input', updateTimeDisplay);
   updateTimeDisplay();
 
